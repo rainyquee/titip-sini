@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titip Aja &mdash; Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEE7D8;
+    --paper-2:#E4DCC8;
+    --ink:#221F1A;
+    --clay:#B85C2E;
+    --clay-dark:#9A4A22;
+    --moss:#5C6B4A;
+    --tape:#EFD988;
+    --line: rgba(34,31,26,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(184,92,46,0.06), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    padding:32px 18px 64px;
+  }
+  .wrap{max-width:720px; margin:0 auto;}
+
+  header{margin-bottom:24px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--clay-dark);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:16px; height:1px;
+    background:var(--clay-dark);
+    display:inline-block;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(30px, 6vw, 44px);
+    line-height:1;
+    margin:0 0 10px;
+    letter-spacing:-.01em;
+  }
+  h1 span{color:var(--clay);}
+  .sub{
+    font-size:14px;
+    line-height:1.55;
+    color:rgba(34,31,26,0.7);
+    max-width:480px;
+  }
+
+  .live-badge{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--moss);
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:8px 12px;
+    border-radius:2px;
+    white-space:nowrap;
+    margin-top:4px;
+  }
+  .dot{
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--moss);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:.35;}
+  }
+
+  .card{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:24px;
+    position:relative;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:-8px; left:24px;
+    width:44px; height:16px;
+    background:var(--tape);
+    opacity:.8;
+    transform:rotate(-2deg);
+    box-shadow:0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  textarea{
+    width:100%;
+    min-height:260px;
+    resize:vertical;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:14px 16px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--ink);
+    outline:none;
+  }
+  textarea:focus{border-color:var(--clay);}
+
+  .rowbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:10px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:rgba(34,31,26,0.55);
+    min-height:16px;
+  }
+  .status.saving{color:var(--clay-dark);}
+  .status.saved{color:var(--moss);}
+
+  button{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    border:1px solid var(--line);
+    background:transparent;
+    border-radius:2px;
+    padding:8px 14px;
+    cursor:pointer;
+    color:var(--ink);
+    transition:transform .12s ease, border-color .15s ease;
+  }
+  button:hover{border-color:var(--ink);}
+  button:active{transform:scale(0.97);}
+
+  footer{
+    margin-top:32px;
+    font-size:11.5px;
+    color:rgba(34,31,26,0.45);
+    font-family:'IBM Plex Mono', monospace;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">titip teks &middot; live</div>
+      <h1>Titip <span>Live.</span></h1>
+      <p class="sub">Satu catatan bareng, tanpa login, tanpa kode. Ketik di sini, buka di HP lain, langsung nongol&mdash;bisa diedit dari mana aja.</p>
+    </div>
+    <div class="live-badge"><span class="dot"></span>live</div>
+  </header>
+
+  <div class="card">
+    <textarea id="pad" placeholder="Ketik di sini..."></textarea>
+    <div class="rowbar">
+      <div class="status" id="status">memuat...</div>
+      <button id="clearBtn">Kosongin</button>
+    </div>
+  </div>
+
+  <footer>satu catatan buat semua yang buka halaman ini &middot; jangan titip yang rahasia banget</footer>
+</div>
+
+<script>
+const pad = document.getElementById('pad');
+const statusEl = document.getElementById('status');
+const clearBtn = document.getElementById('clearBtn');
+
+const KEY = 'livepad:main';
+let lastKnownValue = null;   // last value we know is in storage
+let lastKnownTs = 0;
+let saveTimer = null;
+let isTyping = false;
+let typingTimer = null;
+
+function setStatus(msg, cls){
+  statusEl.textContent = msg;
+  statusEl.className = 'status' + (cls ? ' ' + cls : '');
+}
+
+function fmtTime(ts){
+  const d = new Date(ts);
+  return d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+}
+
+async function loadRemote(){
+  try{
+    const res = await window.storage.get(KEY, true);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      return parsed;
+    }
+  }catch(e){
+    // key doesn't exist yet
+  }
+  return null;
+}
+
+async function saveRemote(text){
+  const payload = { text: text, ts: Date.now() };
+  const res = await window.storage.set(KEY, JSON.stringify(payload), true);
+  return res ? payload : null;
+}
+
+async function initialLoad(){
+  const remote = await loadRemote();
+  if(remote){
+    pad.value = remote.text;
+    lastKnownValue = remote.text;
+    lastKnownTs = remote.ts;
+    setStatus('tersimpan &middot; diperbarui ' + fmtTime(remote.ts), 'saved');
+  }else{
+    lastKnownValue = '';
+    lastKnownTs = 0;
+    setStatus('kosong, mulai ngetik aja', '');
+  }
+}
+
+async function pollRemote(){
+  if(isTyping) return; // don't stomp on active typing
+  const remote = await loadRemote();
+  if(remote && remote.ts > lastKnownTs){
+    // only overwrite if user isn't mid-edit and content actually differs
+    if(document.activeElement !== pad || pad.value === lastKnownValue){
+      pad.value = remote.text;
+    }
+    lastKnownValue = remote.text;
+    lastKnownTs = remote.ts;
+    setStatus('diperbarui dari device lain &middot; ' + fmtTime(remote.ts), 'saved');
+  }
+}
+
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  setStatus('mengetik...', 'saving');
+  saveTimer = setTimeout(async () => {
+    const text = pad.value;
+    setStatus('menyimpan...', 'saving');
+    const saved = await saveRemote(text);
+    if(saved){
+      lastKnownValue = saved.text;
+      lastKnownTs = saved.ts;
+      setStatus('tersimpan &middot; ' + fmtTime(saved.ts), 'saved');
+    }else{
+      setStatus('gagal nyimpen, coba lagi', '');
+    }
+  }, 600);
+}
+
+pad.addEventListener('input', () => {
+  isTyping = true;
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(() => { isTyping = false; }, 1200);
+  scheduleSave();
+});
+
+clearBtn.addEventListener('click', async () => {
+  pad.value = '';
+  isTyping = false;
+  setStatus('menyimpan...', 'saving');
+  const saved = await saveRemote('');
+  if(saved){
+    lastKnownValue = '';
+    lastKnownTs = saved.ts;
+    setStatus('dikosongin &middot; ' + fmtTime(saved.ts), 'saved');
+  }
+});
+
+initialLoad();
+setInterval(pollRemote, 2000);
+</script>
+</body>
+</html>
