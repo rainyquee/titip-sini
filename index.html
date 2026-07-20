@@ -252,6 +252,11 @@ function buildCard(i){
   sendBtn.addEventListener('click', async () => {
     const text = pad.value;
     setStatus('mengirim...', 'saving');
+    if(!window.storage || typeof window.storage.set !== 'function'){
+      setStatus('storage nggak tersedia di sini', '');
+      console.error('window.storage tidak ada di environment ini');
+      return;
+    }
     try{
       const payload = { text: text, ts: Date.now() };
       const res = await window.storage.set(keyFor(i), JSON.stringify(payload), true);
@@ -261,10 +266,12 @@ function buildCard(i){
         state[i].isTyping = false;
         setStatus('terkirim \u00b7 ' + fmtTime(payload.ts), 'saved');
       }else{
-        setStatus('gagal ngirim, coba lagi', '');
+        setStatus('gagal ngirim (respons kosong)', '');
+        console.error('storage.set mengembalikan null/undefined untuk', keyFor(i));
       }
     }catch(e){
-      setStatus('gagal ngirim, coba lagi', '');
+      setStatus('gagal: ' + (e && e.message ? e.message : String(e)), '');
+      console.error('storage.set error', e);
     }
   });
 
