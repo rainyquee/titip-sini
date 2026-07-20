@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titip Aja &mdash; Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEE7D8;
+    --paper-2:#E4DCC8;
+    --ink:#221F1A;
+    --clay:#B85C2E;
+    --clay-dark:#9A4A22;
+    --moss:#5C6B4A;
+    --tape:#EFD988;
+    --line: rgba(34,31,26,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(184,92,46,0.06), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    padding:32px 18px 64px;
+  }
+  .wrap{max-width:1180px; margin:0 auto;}
+
+  header{margin-bottom:24px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--clay-dark);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:16px; height:1px;
+    background:var(--clay-dark);
+    display:inline-block;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(30px, 6vw, 44px);
+    line-height:1;
+    margin:0 0 10px;
+    letter-spacing:-.01em;
+  }
+  h1 span{color:var(--clay);}
+  .sub{
+    font-size:14px;
+    line-height:1.55;
+    color:rgba(34,31,26,0.7);
+    max-width:520px;
+  }
+
+  .live-badge{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--moss);
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:8px 12px;
+    border-radius:2px;
+    white-space:nowrap;
+    margin-top:4px;
+  }
+  .dot{
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--moss);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:.35;}
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:16px;
+  }
+
+  .card{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:18px;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:-7px; left:18px;
+    width:34px; height:13px;
+    background:var(--tape);
+    opacity:.8;
+    transform:rotate(-2deg);
+    box-shadow:0 1px 2px rgba(0,0,0,0.15);
+  }
+  .card .num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--clay-dark);
+    margin-bottom:8px;
+  }
+
+  textarea{
+    width:100%;
+    min-height:120px;
+    resize:vertical;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:11px 12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    line-height:1.55;
+    color:var(--ink);
+    outline:none;
+    flex:1;
+  }
+  textarea:focus{border-color:var(--clay);}
+
+  .btnrow{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+  }
+  button{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    border:1px solid var(--line);
+    background:transparent;
+    border-radius:2px;
+    padding:8px 12px;
+    cursor:pointer;
+    color:var(--ink);
+    transition:transform .12s ease, border-color .15s ease, background .15s ease;
+    flex:1;
+  }
+  button:hover{border-color:var(--ink);}
+  button:active{transform:scale(0.97);}
+  .btn-send{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+  .btn-send:hover{background:#3a352c;}
+
+  .status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:rgba(34,31,26,0.5);
+    margin-top:8px;
+    min-height:14px;
+  }
+  .status.saving{color:var(--clay-dark);}
+  .status.saved{color:var(--moss);}
+
+  footer{
+    margin-top:32px;
+    font-size:11.5px;
+    color:rgba(34,31,26,0.45);
+    font-family:'IBM Plex Mono', monospace;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">titip teks &middot; live &middot; 10 kolom</div>
+      <h1>Titip <span>Live.</span></h1>
+      <p class="sub">10 kolom bareng, tanpa login. Tulis, klik Kirim, langsung nongol di device lain. Semua orang bisa edit dan salin isi tiap kolom.</p>
+    </div>
+    <div class="live-badge"><span class="dot"></span>live</div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>10 kolom buat semua yang buka halaman ini &middot; jangan titip yang rahasia banget</footer>
+</div>
+
+<script>
+const TOTAL = 10;
+const grid = document.getElementById('grid');
+const state = {}; // slotIndex -> { lastValue, lastTs, isTyping, typingTimer }
+
+function fmtTime(ts){
+  const d = new Date(ts);
+  return d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+}
+
+function keyFor(i){ return 'livepad10:' + i; }
+
+function buildCard(i){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="num">kolom ${i}</div>
+    <textarea id="pad-${i}" placeholder="Tulis di sini..."></textarea>
+    <div class="btnrow">
+      <button class="btn-send" id="send-${i}">Kirim</button>
+      <button id="copy-${i}">Salin</button>
+    </div>
+    <div class="status" id="status-${i}">memuat...</div>
+  `;
+  grid.appendChild(card);
+
+  state[i] = { lastValue: '', lastTs: 0, isTyping: false, typingTimer: null };
+
+  const pad = card.querySelector(`#pad-${i}`);
+  const sendBtn = card.querySelector(`#send-${i}`);
+  const copyBtn = card.querySelector(`#copy-${i}`);
+  const statusEl = card.querySelector(`#status-${i}`);
+
+  function setStatus(msg, cls){
+    statusEl.textContent = msg;
+    statusEl.className = 'status' + (cls ? ' ' + cls : '');
+  }
+
+  pad.addEventListener('input', () => {
+    state[i].isTyping = true;
+    clearTimeout(state[i].typingTimer);
+    state[i].typingTimer = setTimeout(() => { state[i].isTyping = false; }, 1500);
+    setStatus('belum dikirim', '');
+  });
+
+  sendBtn.addEventListener('click', async () => {
+    const text = pad.value;
+    setStatus('mengirim...', 'saving');
+    try{
+      const payload = { text: text, ts: Date.now() };
+      const res = await window.storage.set(keyFor(i), JSON.stringify(payload), true);
+      if(res){
+        state[i].lastValue = text;
+        state[i].lastTs = payload.ts;
+        state[i].isTyping = false;
+        setStatus('terkirim \u00b7 ' + fmtTime(payload.ts), 'saved');
+      }else{
+        setStatus('gagal ngirim, coba lagi', '');
+      }
+    }catch(e){
+      setStatus('gagal ngirim, coba lagi', '');
+    }
+  });
+
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(pad.value);
+    const old = copyBtn.textContent;
+    copyBtn.textContent = 'Tersalin!';
+    setTimeout(()=>copyBtn.textContent = old, 1100);
+  });
+
+  return { pad, statusEl, setStatus };
+}
+
+const refs = {};
+
+async function loadRemote(i){
+  try{
+    const res = await window.storage.get(keyFor(i), true);
+    if(res && res.value){
+      return JSON.parse(res.value);
+    }
+  }catch(e){ /* not found yet */ }
+  return null;
+}
+
+async function initSlot(i){
+  const remote = await loadRemote(i);
+  const { pad, setStatus } = refs[i];
+  if(remote){
+    pad.value = remote.text;
+    state[i].lastValue = remote.text;
+    state[i].lastTs = remote.ts;
+    setStatus('terkirim \u00b7 ' + fmtTime(remote.ts), 'saved');
+  }else{
+    setStatus('kosong', '');
+  }
+}
+
+async function pollSlot(i){
+  if(state[i].isTyping) return;
+  const remote = await loadRemote(i);
+  if(remote && remote.ts > state[i].lastTs){
+    const { pad, setStatus } = refs[i];
+    if(document.activeElement !== pad){
+      pad.value = remote.text;
+    }
+    state[i].lastValue = remote.text;
+    state[i].lastTs = remote.ts;
+    setStatus('diperbarui dari device lain \u00b7 ' + fmtTime(remote.ts), 'saved');
+  }
+}
+
+for(let i = 1; i <= TOTAL; i++){
+  refs[i] = buildCard(i);
+}
+for(let i = 1; i <= TOTAL; i++){
+  initSlot(i);
+}
+setInterval(() => {
+  for(let i = 1; i <= TOTAL; i++) pollSlot(i);
+}, 2000);
+</script>
+</body>
+</html>
